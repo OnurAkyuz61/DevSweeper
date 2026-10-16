@@ -6,22 +6,48 @@ import Observation
 final class SweepViewModel {
     private let service = SweepService()
 
-    var selectedCategory: SweepCategory = .cache
+    var selectedCategory: SweepCategory = .cache {
+        didSet {
+            if oldValue != selectedCategory {
+                selectedItemIDs.removeAll()
+            }
+        }
+    }
+
     var cacheItems: [SweepItem] = []
     var simulatorItems: [SweepItem] = []
+    var selectedItemIDs: Set<SweepItem.ID> = []
+
     var isLoading = false
     var isDeleting = false
     var deletingItemID: UUID?
     var errorMessage: String?
     var showError = false
+
     var confirmDeleteItem: SweepItem?
     var confirmDeleteAll = false
+    var confirmDeleteSelected = false
+
+    /// true = Çöp Kutusu (güvenli), false = kalıcı sil
+    var preferTrash = true
 
     var items: [SweepItem] {
         switch selectedCategory {
         case .cache: return cacheItems
         case .simulators: return simulatorItems
         }
+    }
+
+    var selectedItems: [SweepItem] {
+        items.filter { selectedItemIDs.contains($0.id) }
+    }
+
+    var selectedByteCount: Int64 {
+        selectedItems.reduce(0) { $0 + $1.byteCount }
+    }
+
+    var formattedSelectedSize: String {
+        ByteCountFormatter.string(fromByteCount: selectedByteCount, countStyle: .file)
     }
 
     var totalByteCount: Int64 {
@@ -36,6 +62,10 @@ final class SweepViewModel {
         !items.isEmpty && !isLoading && !isDeleting
     }
 
+    var canCleanSelected: Bool {
+        !selectedItems.isEmpty && !isLoading && !isDeleting
+    }
+
     // MARK: - Load
 
     func loadAll() async {
@@ -47,6 +77,7 @@ final class SweepViewModel {
 
         cacheItems = await cache
         simulatorItems = await sims
+        pruneSelection()
     }
 
     func refreshCurrent() async {
@@ -59,9 +90,10 @@ final class SweepViewModel {
         case .simulators:
             simulatorItems = await service.scanSimulatorItems()
         }
+        pruneSelection()
     }
 
-    // MARK: - Delete
+    // MARK: - Delete requests
 
     func requestDelete(_ item: SweepItem) {
         confirmDeleteItem = item
@@ -71,22 +103,48 @@ final class SweepViewModel {
         confirmDeleteAll = true
     }
 
+    func requestDeleteSelected() {
+        guard canCleanSelected else { return }
+        confirmDeleteSelected = true
+    }
+
     func confirmDeleteSingle() async {
         guard let item = confirmDeleteItem else { return }
         confirmDeleteItem = nil
-        await performDelete(item)
+        await performDelete([item])
     }
 
     func confirmDeleteAllItems() async {
         confirmDeleteAll = false
         let targets = items
         guard !targets.isEmpty else { return }
+        await performDelete(targets)
+    }
+
+    func confirmDeleteSelectedItems() async {
+        confirmDeleteSelected = false
+        let targets = selectedItems
+        guard !targets.isEmpty else { return }
+        await performDelete(targets)
+    }
+
+    // MARK: - Private
+
+    private func performDelete(_ targets: [SweepItem]) async {
+        guard !targets.isEmpty else { return }
 
         isDeleting = true
-        defer { isDeleting = false }
+        if targets.count == 1 {
+            deletingItemID = targets[0].id
+        }
+        defer {
+            isDeleting = false
+            deletingItemID = nil
+        }
 
         do {
-            try await service.deleteAll(targets)
+            try await service.deleteAll(targets, preferTrash: preferTrash)
+            selectedItemIDs.subtract(targets.map(\.id))
             await refreshCurrent()
         } catch {
             present(error)
@@ -94,21 +152,9 @@ final class SweepViewModel {
         }
     }
 
-    private func performDelete(_ item: SweepItem) async {
-        isDeleting = true
-        deletingItemID = item.id
-        defer {
-            isDeleting = false
-            deletingItemID = nil
-        }
-
-        do {
-            try await service.delete(item)
-            await refreshCurrent()
-        } catch {
-            present(error)
-            await refreshCurrent()
-        }
+    private func pruneSelection() {
+        let valid = Set(items.map(\.id))
+        selectedItemIDs = selectedItemIDs.intersection(valid)
     }
 
     private func present(_ error: Error) {

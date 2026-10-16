@@ -2,10 +2,12 @@ import SwiftUI
 
 struct SweepItemTableView: View {
     let items: [SweepItem]
+    @Binding var selection: Set<SweepItem.ID>
     let isLoading: Bool
     let isDeleting: Bool
     let deletingItemID: UUID?
     let onClean: (SweepItem) -> Void
+    let onCleanSelected: () -> Void
 
     @State private var sortOrder = [KeyPathComparator(\SweepItem.byteCount, order: .reverse)]
 
@@ -21,7 +23,7 @@ struct SweepItemTableView: View {
                     description: Text("Bu kategoride temizlenecek bir şey yok.")
                 )
             } else {
-                Table(sortedItems, sortOrder: $sortOrder) {
+                Table(sortedItems, selection: $selection, sortOrder: $sortOrder) {
                     TableColumn("Öğe Adı", value: \.name) { item in
                         HStack(spacing: 8) {
                             Image(systemName: icon(for: item.kind))
@@ -65,6 +67,9 @@ struct SweepItemTableView: View {
                         .controlSize(.small)
                     }
                     .width(90)
+                }
+                .onDeleteCommand {
+                    onCleanSelected()
                 }
             }
         }

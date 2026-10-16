@@ -82,16 +82,19 @@ actor SweepService {
 
     // MARK: - Delete
 
-    func delete(_ item: SweepItem) async throws {
-        try await deleteContents(at: item.path, removeRoot: item.kind == .simulatorRuntime || item.kind == .simulatorDevice)
+    /// Varsayılan: Çöp Kutusu'na taşır (güvenli silme).
+    /// `preferTrash == false` ise kalıcı siler.
+    func delete(_ item: SweepItem, preferTrash: Bool = true) async throws {
+        let removeRoot = item.kind == .simulatorRuntime || item.kind == .simulatorDevice
+        try await deleteContents(at: item.path, removeRoot: removeRoot, preferTrash: preferTrash)
     }
 
-    func deleteAll(_ items: [SweepItem]) async throws {
+    func deleteAll(_ items: [SweepItem], preferTrash: Bool = true) async throws {
         var failed: [URL] = []
 
         for item in items {
             do {
-                try await delete(item)
+                try await delete(item, preferTrash: preferTrash)
             } catch {
                 failed.append(item.path)
             }
@@ -258,8 +261,8 @@ actor SweepService {
         return readable.isEmpty ? "\(name) Runtime" : "\(readable) Runtime"
     }
 
-    /// Klasör içeriğini veya klasörün kendisini siler.
-    private func deleteContents(at url: URL, removeRoot: Bool) async throws {
+    /// Klasör içeriğini veya klasörün kendisini Çöp Kutusu'na taşır / kalıcı siler.
+    private func deleteContents(at url: URL, removeRoot: Bool, preferTrash: Bool) async throws {
         var isDirectory: ObjCBool = false
         guard fileManager.fileExists(atPath: url.path, isDirectory: &isDirectory) else {
             throw SweepError.pathNotFound(url)
@@ -267,25 +270,44 @@ actor SweepService {
 
         do {
             if removeRoot {
-                try fileManager.removeItem(at: url)
+                try remove(url, preferTrash: preferTrash)
             } else if isDirectory.boolValue {
-                // DerivedData / Archives / DeviceSupport: kökü bırak, içeriği sil.
+                // DerivedData / Archives / DeviceSupport: kökü bırak, içeriği temizle.
                 let children = try fileManager.contentsOfDirectory(
                     at: url,
                     includingPropertiesForKeys: nil,
                     options: []
                 )
                 for child in children {
-                    try fileManager.removeItem(at: child)
+                    try remove(child, preferTrash: preferTrash)
                 }
             } else {
-                try fileManager.removeItem(at: url)
+                try remove(url, preferTrash: preferTrash)
             }
+        } catch let error as SweepError {
+            throw error
         } catch let error as NSError {
-            if error.domain == NSCocoaErrorDomain && error.code == NSFileWriteNoPermissionError {
+            if error.domain == NSCocoaErrorDomain &&
+                (error.code == NSFileWriteNoPermissionError || error.code == NSFileReadNoPermissionError) {
                 throw SweepError.accessDenied(url)
             }
             throw SweepError.deletionFailed(url, underlying: error)
+        }
+    }
+
+    /// Önce Çöp Kutusu'na taşır; başarısız olursa (ve istenirse) kalıcı siler.
+    private func remove(_ url: URL, preferTrash: Bool) throws {
+        if preferTrash {
+            do {
+                var resulting: NSURL?
+                try fileManager.trashItem(at: url, resultingItemURL: &resulting)
+                return
+            } catch {
+                // Sistem dizinlerinde trash başarısız olabilir → kalıcı silmeye düş.
+                try fileManager.removeItem(at: url)
+            }
+        } else {
+            try fileManager.removeItem(at: url)
         }
     }
 }
