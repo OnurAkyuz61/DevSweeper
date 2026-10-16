@@ -29,7 +29,7 @@ struct SweepItem: Identifiable, Hashable, Sendable {
 
     var xcodeWarning: String? {
         guard affectsXcode else { return nil }
-        return "Bu dosyayı silerseniz Xcode’a zarar verebilirsiniz; ilgili bileşenlerin yeniden indirilmesi / yüklenmesi gerekebilir."
+        return String(localized: "Deleting this may affect Xcode; related components may need to be re-downloaded or reinstalled.")
     }
 
     /// Ağacı düz listeye çevirir (seçim / arama için).
@@ -92,14 +92,21 @@ enum SweepError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .pathNotFound(let url):
-            return "Yol bulunamadı: \(url.path)"
+            return String(format: String(localized: "Path not found: %@"), url.path)
         case .deletionFailed(let url, let underlying):
-            return "Silinemedi (\(url.lastPathComponent)): \(underlying.localizedDescription)"
+            return String(
+                format: String(localized: "Could not delete (%@): %@"),
+                url.lastPathComponent,
+                underlying.localizedDescription
+            )
         case .accessDenied(let url):
-            return "Erişim reddedildi: \(url.path). Sistem Ayarları > Gizlilik ve Güvenlik > Tam Disk Erişimi üzerinden DevSweeper'a izin verin."
+            return String(
+                format: String(localized: "Access denied: %@. Grant Full Disk Access to DevSweeper in System Settings > Privacy & Security."),
+                url.path
+            )
         case .partialDeletion(let urls):
             let names = urls.map(\.lastPathComponent).joined(separator: ", ")
-            return "Bazı öğeler silinemedi: \(names)"
+            return String(format: String(localized: "Some items could not be deleted: %@"), names)
         }
     }
 }

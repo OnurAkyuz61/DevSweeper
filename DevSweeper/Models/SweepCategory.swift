@@ -10,15 +10,15 @@ enum SweepCategory: String, CaseIterable, Identifiable, Hashable {
 
     var title: String {
         switch self {
-        case .cache: return "Önbellek"
-        case .simulators: return "Simülatörler"
+        case .cache: return String(localized: "Cache")
+        case .simulators: return String(localized: "Simulators")
         }
     }
 
     var subtitle: String {
         switch self {
-        case .cache: return "Cache"
-        case .simulators: return "Simulators"
+        case .cache: return String(localized: "Xcode caches")
+        case .simulators: return String(localized: "Runtimes & devices")
         }
     }
 

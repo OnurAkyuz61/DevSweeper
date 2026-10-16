@@ -15,7 +15,7 @@ struct DeletionProgress: Sendable, Equatable {
     )
 
     var statusText: String {
-        guard total > 0 else { return "Hazırlanıyor…" }
+        guard total > 0 else { return String(localized: "Preparing…") }
         return "\(completed) / \(total)"
     }
 }

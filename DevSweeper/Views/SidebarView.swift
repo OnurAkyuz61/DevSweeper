@@ -7,7 +7,7 @@ struct SidebarView: View {
 
     var body: some View {
         List(selection: $selection) {
-            Section("Kategoriler") {
+            Section(String(localized: "Categories")) {
                 ForEach(SweepCategory.allCases) { category in
                     Label {
                         VStack(alignment: .leading, spacing: 2) {

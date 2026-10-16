@@ -18,15 +18,15 @@ struct SummaryFooterView: View {
                 Text(summaryLine)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
-                Text("Toplam temizlenebilir alan: \(totalSize)")
+                Text(String(format: String(localized: "Total cleanable space: %@"), totalSize))
                     .font(.headline)
 
                 Toggle(isOn: preferTrash) {
-                    Text("Güvenli silme (Çöp Kutusu)")
+                    Text(String(localized: "Safe delete (Trash)"))
                         .font(.caption)
                 }
                 .toggleStyle(.checkbox)
-                .help("Açıkken öğeler Çöp Kutusu'na taşınır; kapalıyken kalıcı silinir.")
+                .help(String(localized: "When on, items go to Trash; when off, they are permanently deleted."))
             }
 
             Spacer()
@@ -35,7 +35,10 @@ struct SummaryFooterView: View {
                 Button(role: .destructive) {
                     onCleanSelected()
                 } label: {
-                    Label("Seçilenleri Temizle (\(selectedCount))", systemImage: "trash")
+                    Label(
+                        String(format: String(localized: "Clean Selected (%lld)"), selectedCount),
+                        systemImage: "trash"
+                    )
                 }
                 .buttonStyle(.bordered)
                 .tint(.orange)
@@ -51,7 +54,7 @@ struct SummaryFooterView: View {
                         .controlSize(.small)
                         .padding(.horizontal, 8)
                 } else {
-                    Label("Tümünü Temizle", systemImage: "trash.fill")
+                    Label(String(localized: "Clean All"), systemImage: "trash.fill")
                 }
             }
             .buttonStyle(.borderedProminent)
@@ -65,8 +68,13 @@ struct SummaryFooterView: View {
 
     private var summaryLine: String {
         if selectedCount > 0 {
-            return "\(itemCount) öğe · \(selectedCount) seçili (\(selectedSize))"
+            return String(
+                format: String(localized: "%lld items · %lld selected (%@)"),
+                itemCount,
+                selectedCount,
+                selectedSize
+            )
         }
-        return "\(itemCount) öğe"
+        return String(format: String(localized: "%lld items"), itemCount)
     }
 }

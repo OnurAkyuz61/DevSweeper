@@ -1,0 +1,338 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Access denied: %@. Grant Full Disk Access to DevSweeper in System Settings > Privacy & Security." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Access denied: %@. Grant Full Disk Access to DevSweeper in System Settings > Privacy & Security." } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Erişim reddedildi: %@. Sistem Ayarları > Gizlilik ve Güvenlik > Tam Disk Erişimi üzerinden DevSweeper'a izin verin." } }
+      }
+    },
+    "Archives" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Archives" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Archives" } }
+      }
+    },
+    "Cache" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Cache" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Önbellek" } }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Cancel" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "İptal" } }
+      }
+    },
+    "Categories" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Categories" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Kategoriler" } }
+      }
+    },
+    "Clean All" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Clean All" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Tümünü Temizle" } }
+      }
+    },
+    "Clean Selected (%lld)" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Clean Selected (%lld)" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Seçilenleri Temizle (%lld)" } }
+      }
+    },
+    "Clean Selected" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Clean Selected" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Seçilenleri Temizle" } }
+      }
+    },
+    "Could not delete (%@): %@" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Could not delete (%@): %@" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Silinemedi (%@): %@" } }
+      }
+    },
+    "Delete Permanently" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Delete Permanently" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Kalıcı Sil" } }
+      }
+    },
+    "Delete permanently?" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Delete permanently?" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Kalıcı sil?" } }
+      }
+    },
+    "Delete" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Delete" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Sil" } }
+      }
+    },
+    "Deleting…" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Deleting…" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Siliniyor…" } }
+      }
+    },
+    "Deleting" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Deleting" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Siliniyor" } }
+      }
+    },
+    "Deletion in progress" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Deletion in progress" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Silme işlemi devam ediyor" } }
+      }
+    },
+    "Derived Data" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Derived Data" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Derived Data" } }
+      }
+    },
+    "Error" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Error" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Hata" } }
+      }
+    },
+    "File Path" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "File Path" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Dosya Yolu" } }
+      }
+    },
+    "When on, items go to Trash; when off, they are permanently deleted." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "When on, items go to Trash; when off, they are permanently deleted." } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Açıkken öğeler Çöp Kutusu'na taşınır; kapalıyken kalıcı silinir." } }
+      }
+    },
+    "iOS Device Support" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "iOS Device Support" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "iOS Device Support" } }
+      }
+    },
+    "Item Name" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Item Name" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Öğe Adı" } }
+      }
+    },
+    "Move to Trash" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Move to Trash" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Çöp Kutusu'na Taşı" } }
+      }
+    },
+    "Move to Trash?" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Move to Trash?" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Çöp Kutusu'na taşı?" } }
+      }
+    },
+    "Moving to Trash" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Moving to Trash" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Çöp Kutusu’na Taşınıyor" } }
+      }
+    },
+    "Moving…" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Moving…" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Taşınıyor…" } }
+      }
+    },
+    "No items found" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "No items found" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Öğe bulunamadı" } }
+      }
+    },
+    "Nothing to clean in this category." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Nothing to clean in this category." } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Bu kategoride temizlenecek bir şey yok." } }
+      }
+    },
+    "OK" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "OK" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Tamam" } }
+      }
+    },
+    "Action" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Action" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "İşlem" } }
+      }
+    },
+    "Path not found: %@" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Path not found: %@" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Yol bulunamadı: %@" } }
+      }
+    },
+    "Preparing…" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Preparing…" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Hazırlanıyor…" } }
+      }
+    },
+    "Refresh" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Refresh" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Yenile" } }
+      }
+    },
+    "Runtimes & devices" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Runtimes & devices" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Runtime ve cihazlar" } }
+      }
+    },
+    "Safe delete (Trash)" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Safe delete (Trash)" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Güvenli silme (Çöp Kutusu)" } }
+      }
+    },
+    "Scanning…" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Scanning…" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Taranıyor…" } }
+      }
+    },
+    "Simulator Devices" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Simulator Devices" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Simülatör Cihazları" } }
+      }
+    },
+    "Simulator Runtimes" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Simulator Runtimes" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Simülatör Runtime’ları" } }
+      }
+    },
+    "Simulators" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Simulators" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Simülatörler" } }
+      }
+    },
+    "Size" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Size" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Boyut" } }
+      }
+    },
+    "Some items could not be deleted: %@" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Some items could not be deleted: %@" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Bazı öğeler silinemedi: %@" } }
+      }
+    },
+    "This selection includes items that may affect Xcode or require re-downloading. Deleting them may impact Xcode." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "This selection includes items that may affect Xcode or require re-downloading. Deleting them may impact Xcode." } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Bu seçimde Xcode’a zarar verebilecek / yeniden indirme gerektirebilecek öğeler var. Silerseniz Xcode etkilenebilir." } }
+      }
+    },
+    "Total cleanable space: %@" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Total cleanable space: %@" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Toplam temizlenebilir alan: %@" } }
+      }
+    },
+    "Xcode caches" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Xcode caches" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Xcode önbellekleri" } }
+      }
+    },
+    "Xcode warning" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Xcode warning" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Xcode uyarısı" } }
+      }
+    },
+    "⚠️ Xcode warning" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "⚠️ Xcode warning" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "⚠️ Xcode uyarısı" } }
+      }
+    },
+    "Deleting this may affect Xcode; related components may need to be re-downloaded or reinstalled." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Deleting this may affect Xcode; related components may need to be re-downloaded or reinstalled." } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Bu dosyayı silerseniz Xcode’a zarar verebilirsiniz; ilgili bileşenlerin yeniden indirilmesi / yüklenmesi gerekebilir." } }
+      }
+    },
+    "Move selected to Trash?" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Move selected to Trash?" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Seçilenleri Çöp Kutusu'na taşı?" } }
+      }
+    },
+    "Delete selected permanently?" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Delete selected permanently?" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Seçilenleri kalıcı sil?" } }
+      }
+    },
+    "will be moved to Trash" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "will be moved to Trash" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Çöp Kutusu'na taşınacak" } }
+      }
+    },
+    "will be permanently deleted" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "will be permanently deleted" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "kalıcı olarak silinecek" } }
+      }
+    },
+    "%lld items %@" : {
+      "comment" : "e.g. '3 items will be moved to Trash (1.2 GB)' — second arg includes action+size elsewhere",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%lld items %@" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "%lld öğe %@" } }
+      }
+    },
+    "%lld items · %lld selected (%@)" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%lld items · %lld selected (%@)" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "%lld öğe · %lld seçili (%@)" } }
+      }
+    },
+    "%lld items" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%lld items" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "%lld öğe" } }
+      }
+    },
+    "\"%@\" %@ (%@)." : {
+      "comment" : "\"Name\" will be moved to Trash (size).",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "\"%@\" %@ (%@)." } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "\"%@\" %@ (%@)." } }
+      }
+    },
+    "%lld items %@ (%@)." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%lld items %@ (%@)." } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "%lld öğe %@ (%@)." } }
+      }
+    }
+  },
+  "version" : "1.0"
+}

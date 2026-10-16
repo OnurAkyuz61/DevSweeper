@@ -31,8 +31,8 @@ struct ContentView: View {
         .task {
             await viewModel.loadAll()
         }
-        .alert("Hata", isPresented: $viewModel.showError, presenting: viewModel.errorMessage) { _ in
-            Button("Tamam", role: .cancel) {}
+        .alert(String(localized: "Error"), isPresented: $viewModel.showError, presenting: viewModel.errorMessage) { _ in
+            Button(String(localized: "OK"), role: .cancel) {}
         } message: { message in
             Text(message)
         }
@@ -43,7 +43,7 @@ struct ContentView: View {
             Button(confirmButtonTitle, role: .destructive) {
                 Task { await viewModel.confirmDeleteSingle() }
             }
-            Button("İptal", role: .cancel) {
+            Button(String(localized: "Cancel"), role: .cancel) {
                 viewModel.cancelDeleteSingle()
             }
         } message: {
@@ -58,7 +58,7 @@ struct ContentView: View {
             Button(confirmButtonTitle, role: .destructive) {
                 Task { await viewModel.confirmDeleteSelectedItems() }
             }
-            Button("İptal", role: .cancel) {}
+            Button(String(localized: "Cancel"), role: .cancel) {}
         } message: {
             Text(deletionMessage(for: viewModel.selectedItems))
         }
@@ -69,7 +69,7 @@ struct ContentView: View {
             Button(confirmButtonTitle, role: .destructive) {
                 Task { await viewModel.confirmDeleteAllItems() }
             }
-            Button("İptal", role: .cancel) {}
+            Button(String(localized: "Cancel"), role: .cancel) {}
         } message: {
             Text(deletionMessage(for: viewModel.items, treatingAsAll: true))
         }
@@ -109,7 +109,7 @@ struct ContentView: View {
                     Button {
                         viewModel.requestDeleteSelected()
                     } label: {
-                        Label("Seçilenleri Temizle", systemImage: "trash")
+                        Label(String(localized: "Clean Selected"), systemImage: "trash")
                     }
                     .disabled(viewModel.isDeleting)
                 }
@@ -117,7 +117,7 @@ struct ContentView: View {
                 Button {
                     Task { await viewModel.refreshCurrent() }
                 } label: {
-                    Label("Yenile", systemImage: "arrow.clockwise")
+                    Label(String(localized: "Refresh"), systemImage: "arrow.clockwise")
                 }
                 .disabled(viewModel.isLoading || viewModel.isDeleting)
                 .keyboardShortcut("r", modifiers: .command)
@@ -126,24 +126,30 @@ struct ContentView: View {
     }
 
     private var confirmButtonTitle: String {
-        viewModel.preferTrash ? "Çöp Kutusu'na Taşı" : "Kalıcı Sil"
+        viewModel.preferTrash
+            ? String(localized: "Move to Trash")
+            : String(localized: "Delete Permanently")
     }
 
     private func deletionTitle(for items: [SweepItem]) -> String {
         let risky = items.contains(where: \.affectsXcode)
         if risky {
-            return "⚠️ Xcode uyarısı"
+            return String(localized: "⚠️ Xcode warning")
         }
         if viewModel.preferTrash {
-            return items.count <= 1 ? "Çöp Kutusu'na taşı?" : "Seçilenleri Çöp Kutusu'na taşı?"
+            return items.count <= 1
+                ? String(localized: "Move to Trash?")
+                : String(localized: "Move selected to Trash?")
         }
-        return items.count <= 1 ? "Kalıcı sil?" : "Seçilenleri kalıcı sil?"
+        return items.count <= 1
+            ? String(localized: "Delete permanently?")
+            : String(localized: "Delete selected permanently?")
     }
 
     private func deletionMessage(for items: [SweepItem], treatingAsAll: Bool = false) -> String {
         let action = viewModel.preferTrash
-            ? "Çöp Kutusu'na taşınacak"
-            : "kalıcı olarak silinecek"
+            ? String(localized: "will be moved to Trash")
+            : String(localized: "will be permanently deleted")
 
         let size: String
         let count: Int
@@ -152,7 +158,12 @@ struct ContentView: View {
             count = items.count
         } else if items.count == 1, let item = items.first {
             var lines: [String] = [
-                "\"\(item.name)\" \(action) (\(item.formattedSize)).",
+                String(
+                    format: String(localized: "\"%@\" %@ (%@)."),
+                    item.name,
+                    action,
+                    item.formattedSize
+                ),
                 item.path.path
             ]
             if let warning = item.xcodeWarning {
@@ -168,9 +179,15 @@ struct ContentView: View {
             count = items.count
         }
 
-        var text = "\(count) öğe \(action) (\(size))."
+        var text = String(
+            format: String(localized: "%lld items %@ (%@)."),
+            count,
+            action,
+            size
+        )
         if items.contains(where: \.affectsXcode) {
-            text += "\n\n⚠️ Bu seçimde Xcode’a zarar verebilecek / yeniden indirme gerektirebilecek öğeler var. Silerseniz Xcode etkilenebilir."
+            text += "\n\n⚠️ "
+            text += String(localized: "This selection includes items that may affect Xcode or require re-downloading. Deleting them may impact Xcode.")
         }
         return text
     }

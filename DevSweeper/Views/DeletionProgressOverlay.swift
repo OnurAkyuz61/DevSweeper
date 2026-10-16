@@ -13,7 +13,7 @@ struct DeletionProgressOverlay: View {
                 .contentShape(Rectangle())
 
             VStack(spacing: 0) {
-                Text(preferTrash ? "Çöp Kutusu’na Taşınıyor" : "Siliniyor")
+                Text(preferTrash ? String(localized: "Moving to Trash") : String(localized: "Deleting"))
                     .font(.headline)
                     .padding(.top, 16)
                     .padding(.bottom, 12)
@@ -44,7 +44,7 @@ struct DeletionProgressOverlay: View {
                             .progressViewStyle(.linear)
 
                         HStack {
-                            Text(preferTrash ? "Taşınıyor…" : "Siliniyor…")
+                            Text(preferTrash ? String(localized: "Moving…") : String(localized: "Deleting…"))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                             Spacer()
@@ -66,7 +66,7 @@ struct DeletionProgressOverlay: View {
             .padding(40)
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Silme işlemi devam ediyor")
+        .accessibilityLabel(String(localized: "Deletion in progress"))
         .accessibilityValue(progress.statusText)
     }
 }

@@ -12,13 +12,13 @@ struct SweepItemTableView: View {
     var body: some View {
         Group {
             if isLoading && items.isEmpty {
-                ProgressView("Taranıyor…")
+                ProgressView(String(localized: "Scanning…"))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if items.isEmpty {
                 ContentUnavailableView(
-                    "Öğe bulunamadı",
+                    String(localized: "No items found"),
                     systemImage: "tray",
-                    description: Text("Bu kategoride temizlenecek bir şey yok.")
+                    description: Text(String(localized: "Nothing to clean in this category."))
                 )
             } else {
                 VStack(spacing: 0) {
@@ -38,13 +38,13 @@ struct SweepItemTableView: View {
 
     private var headerRow: some View {
         HStack(spacing: 12) {
-            Text("Öğe Adı")
+            Text(String(localized: "Item Name"))
                 .frame(minWidth: 200, maxWidth: .infinity, alignment: .leading)
-            Text("Dosya Yolu")
+            Text(String(localized: "File Path"))
                 .frame(minWidth: 180, maxWidth: .infinity, alignment: .leading)
-            Text("Boyut")
+            Text(String(localized: "Size"))
                 .frame(width: 90, alignment: .trailing)
-            Text("İşlem")
+            Text(String(localized: "Action"))
                 .frame(width: 88, alignment: .center)
         }
         .font(.caption.weight(.semibold))
@@ -70,7 +70,7 @@ struct SweepItemTableView: View {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .foregroundStyle(.orange)
                         .help(item.xcodeWarning ?? "")
-                        .accessibilityLabel("Xcode uyarısı")
+                        .accessibilityLabel(String(localized: "Xcode warning"))
                 }
 
                 if item.isGroup, let count = item.children?.count, count > 0 {
@@ -103,20 +103,20 @@ struct SweepItemTableView: View {
                         .controlSize(.small)
                         .frame(width: 72)
                 } else {
-                    Label("Sil", systemImage: "trash")
+                    Label(String(localized: "Delete"), systemImage: "trash")
                 }
             }
             .buttonStyle(.bordered)
             .tint(.red)
             .controlSize(.small)
             .disabled(isDeleting || isLoading)
-            .help(item.affectsXcode ? (item.xcodeWarning ?? "Sil") : "Sil")
+            .help(item.affectsXcode ? (item.xcodeWarning ?? String(localized: "Delete")) : String(localized: "Delete"))
             .frame(width: 88)
         }
         .padding(.vertical, 2)
         .tag(item.id)
         .contextMenu {
-            Button("Sil", role: .destructive) {
+            Button(String(localized: "Delete"), role: .destructive) {
                 onClean(item)
             }
         }

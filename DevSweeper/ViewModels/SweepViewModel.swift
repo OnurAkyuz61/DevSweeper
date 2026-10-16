@@ -176,7 +176,7 @@ final class SweepViewModel {
 
         isDeleting = true
         deletionProgress = DeletionProgress(
-            currentName: compact.first?.name ?? "Siliniyor…",
+            currentName: compact.first?.name ?? String(localized: "Deleting…"),
             completed: 0,
             total: max(compact.count, 1),
             fractionCompleted: 0

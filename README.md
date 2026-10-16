@@ -17,6 +17,11 @@ macOS uygulaması — Xcode önbelleklerini ve CoreSimulator cihaz/runtime’lar
 - Asenkron tarama ve silme (UI donmaz)
 - Hata alert’leri (erişim reddi, kısmi silme vb.)
 
+## Dil
+
+- Cihaz dili **Türkçe** → Türkçe arayüz
+- Cihaz dili **İngilizce** (veya diğer diller) → İngilizce arayüz
+
 ## Gereksinimler
 
 - macOS 14.0+

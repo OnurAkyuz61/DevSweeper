@@ -50,21 +50,21 @@ actor SweepService {
 
     func scanCacheItems() async -> [SweepItem] {
         async let derived = makeGroupItem(
-            name: "Derived Data",
+            name: String(localized: "Derived Data"),
             path: derivedDataURL,
             kind: .derivedData,
             category: .cache,
             affectsXcode: false
         )
         async let archives = makeGroupItem(
-            name: "Archives",
+            name: String(localized: "Archives"),
             path: archivesURL,
             kind: .archives,
             category: .cache,
             affectsXcode: false
         )
         async let deviceSupport = makeGroupItem(
-            name: "iOS Device Support",
+            name: String(localized: "iOS Device Support"),
             path: deviceSupportURL,
             kind: .deviceSupport,
             category: .cache,
@@ -88,7 +88,7 @@ actor SweepService {
             result.append(
                 SweepItem(
                     id: UUID(),
-                    name: "Simulator Runtimes",
+                    name: String(localized: "Simulator Runtimes"),
                     path: simulatorRuntimesURL,
                     byteCount: total,
                     category: .simulators,
@@ -105,7 +105,7 @@ actor SweepService {
             result.append(
                 SweepItem(
                     id: UUID(),
-                    name: "Simulator Devices",
+                    name: String(localized: "Simulator Devices"),
                     path: simulatorDevicesURL,
                     byteCount: total,
                     category: .simulators,
@@ -142,7 +142,7 @@ actor SweepService {
         if let onProgress {
             await onProgress(
                 DeletionProgress(
-                    currentName: units.first?.name ?? "Siliniyor…",
+                    currentName: units.first?.name ?? String(localized: "Deleting…"),
                     completed: 0,
                     total: total,
                     fractionCompleted: 0
