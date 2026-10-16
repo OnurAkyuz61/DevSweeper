@@ -38,6 +38,49 @@ struct SweepItem: Identifiable, Hashable, Sendable {
             [item] + flatten(item.children ?? [])
         }
     }
+
+    /// Silinen öğeleri anında listeden düşürür; grup boyutlarını yeniden hesaplar.
+    /// Grup kendisi silinirse çocukları boşaltılır (kök klasör ekranda 0 B kalır).
+    nonisolated static func removing(_ items: [SweepItem], ids: Set<UUID>) -> [SweepItem] {
+        items.compactMap { item -> SweepItem? in
+            if ids.contains(item.id) {
+                if item.isGroup {
+                    return SweepItem(
+                        id: item.id,
+                        name: item.name,
+                        path: item.path,
+                        byteCount: 0,
+                        category: item.category,
+                        kind: item.kind,
+                        isGroup: true,
+                        affectsXcode: item.affectsXcode,
+                        children: []
+                    )
+                }
+                return nil
+            }
+
+            let newChildren = item.children.map { removing($0, ids: ids) }
+            let newBytes: Int64
+            if let newChildren {
+                newBytes = newChildren.reduce(0) { $0 + $1.byteCount }
+            } else {
+                newBytes = item.byteCount
+            }
+
+            return SweepItem(
+                id: item.id,
+                name: item.name,
+                path: item.path,
+                byteCount: newBytes,
+                category: item.category,
+                kind: item.kind,
+                isGroup: item.isGroup,
+                affectsXcode: item.affectsXcode,
+                children: newChildren
+            )
+        }
+    }
 }
 
 enum SweepError: LocalizedError {

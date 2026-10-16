@@ -105,6 +105,17 @@ final class SweepViewModel {
         pruneSelection()
     }
 
+    /// Sessiz yenileme — silme sonrası boyutları doğrular, UI'ı "yükleniyor" yapmaz.
+    private func refreshQuietly() async {
+        switch selectedCategory {
+        case .cache:
+            cacheItems = await service.scanCacheItems()
+        case .simulators:
+            simulatorItems = await service.scanSimulatorItems()
+        }
+        pruneSelection()
+    }
+
     // MARK: - Delete requests
 
     func requestDelete(_ item: SweepItem) {
@@ -145,9 +156,16 @@ final class SweepViewModel {
     private func performDelete(_ targets: [SweepItem]) async {
         guard !targets.isEmpty else { return }
 
+        let compact = SweepService.compactTargets(targets)
+        let removedIDs = Set(SweepItem.flatten(compact).map(\.id))
+            .union(compact.map(\.id))
+
+        // Optimistic UI: onaylanınca hemen listeden düş.
+        dropFromScreen(ids: removedIDs)
+
         isDeleting = true
-        if targets.count == 1 {
-            deletingItemID = targets[0].id
+        if compact.count == 1 {
+            deletingItemID = compact[0].id
         }
         defer {
             isDeleting = false
@@ -155,13 +173,23 @@ final class SweepViewModel {
         }
 
         do {
-            try await service.deleteAll(targets, preferTrash: preferTrash)
-            let removed = Set(SweepItem.flatten(targets).map(\.id))
-            selectedItemIDs.subtract(removed)
-            await refreshCurrent()
+            try await service.deleteAll(compact, preferTrash: preferTrash)
+            // Disk ile senkron — arka planda, liste zaten güncel görünür.
+            await refreshQuietly()
         } catch {
             present(error)
-            await refreshCurrent()
+            await refreshQuietly()
+        }
+    }
+
+    private func dropFromScreen(ids: Set<UUID>) {
+        selectedItemIDs.subtract(ids)
+
+        switch selectedCategory {
+        case .cache:
+            cacheItems = SweepItem.removing(cacheItems, ids: ids)
+        case .simulators:
+            simulatorItems = SweepItem.removing(simulatorItems, ids: ids)
         }
     }
 
