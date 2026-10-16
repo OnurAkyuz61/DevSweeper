@@ -1,9 +1,10 @@
 import Foundation
 
 /// Klasör boyutunu arka planda hesaplayan yardımcı.
-enum DiskSizeCalculator {
+/// Projede varsayılan MainActor isolation açık; bu tip UI'dan bağımsız olduğu için nonisolated.
+enum DiskSizeCalculator: Sendable {
     /// Verilen URL altındaki tüm dosyaların toplam bayt boyutunu döner.
-    static func byteCount(of url: URL) -> Int64 {
+    nonisolated static func byteCount(of url: URL) -> Int64 {
         let fileManager = FileManager.default
         var isDirectory: ObjCBool = false
 
