@@ -4,16 +4,30 @@ struct ContentView: View {
     @State private var viewModel = SweepViewModel()
 
     var body: some View {
-        NavigationSplitView {
-            SidebarView(
-                selection: $viewModel.selectedCategory,
-                cacheTotal: viewModel.cacheItems.reduce(0) { $0 + $1.byteCount },
-                simulatorTotal: viewModel.simulatorItems.reduce(0) { $0 + $1.byteCount }
-            )
-            .navigationSplitViewColumnWidth(min: 200, ideal: 240, max: 300)
-        } detail: {
-            detailColumn
+        ZStack {
+            NavigationSplitView {
+                SidebarView(
+                    selection: $viewModel.selectedCategory,
+                    cacheTotal: viewModel.cacheItems.reduce(0) { $0 + $1.byteCount },
+                    simulatorTotal: viewModel.simulatorItems.reduce(0) { $0 + $1.byteCount }
+                )
+                .navigationSplitViewColumnWidth(min: 200, ideal: 240, max: 300)
+            } detail: {
+                detailColumn
+            }
+            .disabled(viewModel.isDeleting)
+            .allowsHitTesting(!viewModel.isDeleting)
+
+            if viewModel.isDeleting {
+                DeletionProgressOverlay(
+                    progress: viewModel.deletionProgress,
+                    preferTrash: viewModel.preferTrash
+                )
+                .transition(.opacity)
+                .zIndex(1)
+            }
         }
+        .animation(.easeInOut(duration: 0.2), value: viewModel.isDeleting)
         .task {
             await viewModel.loadAll()
         }

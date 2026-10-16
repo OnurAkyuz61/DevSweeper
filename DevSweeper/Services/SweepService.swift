@@ -124,26 +124,106 @@ actor SweepService {
 
     /// Varsayılan: Çöp Kutusu'na taşır (güvenli silme).
     func delete(_ item: SweepItem, preferTrash: Bool = true) async throws {
-        // Grup: kök klasörü bırak, içeriği temizle.
-        // Yaprak: klasörün / dosyanın kendisini kaldır.
         try await deleteContents(at: item.path, removeRoot: !item.isGroup, preferTrash: preferTrash)
     }
 
-    func deleteAll(_ items: [SweepItem], preferTrash: Bool = true) async throws {
+    /// Öğeleri siler; her birim tamamlandıkça `onProgress` çağrılır (0...1).
+    func deleteAll(
+        _ items: [SweepItem],
+        preferTrash: Bool = true,
+        onProgress: (@Sendable (DeletionProgress) async -> Void)? = nil
+    ) async throws {
         let targets = Self.compactTargets(items)
+        let units = workUnits(for: targets)
+        let total = max(units.count, 1)
         var failed: [URL] = []
+        var completed = 0
 
-        for item in targets {
+        if let onProgress {
+            await onProgress(
+                DeletionProgress(
+                    currentName: units.first?.name ?? "Siliniyor…",
+                    completed: 0,
+                    total: total,
+                    fractionCompleted: 0
+                )
+            )
+        }
+
+        for unit in units {
+            if let onProgress {
+                await onProgress(
+                    DeletionProgress(
+                        currentName: unit.name,
+                        completed: completed,
+                        total: total,
+                        fractionCompleted: Double(completed) / Double(total)
+                    )
+                )
+            }
+
             do {
-                try await delete(item, preferTrash: preferTrash)
+                try await deleteContents(
+                    at: unit.url,
+                    removeRoot: unit.removeRoot,
+                    preferTrash: preferTrash
+                )
             } catch {
-                failed.append(item.path)
+                failed.append(unit.url)
+            }
+
+            completed += 1
+
+            if let onProgress {
+                await onProgress(
+                    DeletionProgress(
+                        currentName: unit.name,
+                        completed: completed,
+                        total: total,
+                        fractionCompleted: Double(completed) / Double(total)
+                    )
+                )
             }
         }
 
         if !failed.isEmpty {
             throw SweepError.partialDeletion(failed)
         }
+    }
+
+    private struct WorkUnit {
+        let name: String
+        let url: URL
+        let removeRoot: Bool
+    }
+
+    /// Grupları alt öğelere bölerek progress çubuğu için anlamlı adımlar üretir.
+    private func workUnits(for items: [SweepItem]) -> [WorkUnit] {
+        var units: [WorkUnit] = []
+
+        for item in items {
+            if item.isGroup {
+                if let children = item.children, !children.isEmpty {
+                    for child in children {
+                        units.append(WorkUnit(name: child.name, url: child.path, removeRoot: true))
+                    }
+                } else if let contents = try? fileManager.contentsOfDirectory(
+                    at: item.path,
+                    includingPropertiesForKeys: nil,
+                    options: []
+                ), !contents.isEmpty {
+                    for url in contents {
+                        units.append(WorkUnit(name: url.lastPathComponent, url: url, removeRoot: true))
+                    }
+                } else {
+                    units.append(WorkUnit(name: item.name, url: item.path, removeRoot: false))
+                }
+            } else {
+                units.append(WorkUnit(name: item.name, url: item.path, removeRoot: true))
+            }
+        }
+
+        return units
     }
 
     /// Üst grup seçiliyse alt öğeleri tekrar silmeye çalışma.

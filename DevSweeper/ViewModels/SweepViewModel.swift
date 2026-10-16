@@ -20,6 +20,7 @@ final class SweepViewModel {
 
     var isLoading = false
     var isDeleting = false
+    var deletionProgress = DeletionProgress.idle
     var deletingItemID: UUID?
     var errorMessage: String?
     var showError = false
@@ -105,7 +106,6 @@ final class SweepViewModel {
         pruneSelection()
     }
 
-    /// Sessiz yenileme — silme sonrası boyutları doğrular, UI'ı "yükleniyor" yapmaz.
     private func refreshQuietly() async {
         switch selectedCategory {
         case .cache:
@@ -160,21 +160,30 @@ final class SweepViewModel {
         let removedIDs = Set(SweepItem.flatten(compact).map(\.id))
             .union(compact.map(\.id))
 
-        // Optimistic UI: onaylanınca hemen listeden düş.
         dropFromScreen(ids: removedIDs)
 
         isDeleting = true
+        deletionProgress = DeletionProgress(
+            currentName: compact.first?.name ?? "Siliniyor…",
+            completed: 0,
+            total: max(compact.count, 1),
+            fractionCompleted: 0
+        )
         if compact.count == 1 {
             deletingItemID = compact[0].id
         }
         defer {
             isDeleting = false
             deletingItemID = nil
+            deletionProgress = .idle
         }
 
         do {
-            try await service.deleteAll(compact, preferTrash: preferTrash)
-            // Disk ile senkron — arka planda, liste zaten güncel görünür.
+            try await service.deleteAll(compact, preferTrash: preferTrash) { [weak self] progress in
+                await MainActor.run {
+                    self?.deletionProgress = progress
+                }
+            }
             await refreshQuietly()
         } catch {
             present(error)
