@@ -33,7 +33,7 @@ struct SweepItem: Identifiable, Hashable, Sendable {
     }
 
     /// Ağacı düz listeye çevirir (seçim / arama için).
-    static func flatten(_ items: [SweepItem]) -> [SweepItem] {
+    nonisolated static func flatten(_ items: [SweepItem]) -> [SweepItem] {
         items.flatMap { item in
             [item] + flatten(item.children ?? [])
         }
