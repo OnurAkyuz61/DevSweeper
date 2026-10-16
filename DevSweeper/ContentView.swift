@@ -23,7 +23,7 @@ struct ContentView: View {
             Text(message)
         }
         .confirmationDialog(
-            deletionTitle(forCount: 1),
+            deletionTitle(for: viewModel.confirmDeleteItem.map { [$0] } ?? []),
             isPresented: Binding(
                 get: { viewModel.confirmDeleteItem != nil },
                 set: { if !$0 { viewModel.confirmDeleteItem = nil } }
@@ -37,10 +37,10 @@ struct ContentView: View {
                 viewModel.confirmDeleteItem = nil
             }
         } message: { item in
-            Text(deletionMessage(name: item.name, path: item.path.path, count: 1, size: item.formattedSize))
+            Text(deletionMessage(for: [item]))
         }
         .confirmationDialog(
-            deletionTitle(forCount: viewModel.selectedItems.count),
+            deletionTitle(for: viewModel.selectedItems),
             isPresented: $viewModel.confirmDeleteSelected
         ) {
             Button(confirmButtonTitle, role: .destructive) {
@@ -48,15 +48,10 @@ struct ContentView: View {
             }
             Button("İptal", role: .cancel) {}
         } message: {
-            Text(deletionMessage(
-                name: nil,
-                path: nil,
-                count: viewModel.selectedItems.count,
-                size: viewModel.formattedSelectedSize
-            ))
+            Text(deletionMessage(for: viewModel.selectedItems))
         }
         .confirmationDialog(
-            deletionTitle(forCount: viewModel.items.count),
+            deletionTitle(for: viewModel.items),
             isPresented: $viewModel.confirmDeleteAll
         ) {
             Button(confirmButtonTitle, role: .destructive) {
@@ -64,12 +59,7 @@ struct ContentView: View {
             }
             Button("İptal", role: .cancel) {}
         } message: {
-            Text(deletionMessage(
-                name: nil,
-                path: nil,
-                count: viewModel.items.count,
-                size: viewModel.formattedTotalSize
-            ))
+            Text(deletionMessage(for: viewModel.items, treatingAsAll: true))
         }
     }
 
@@ -127,23 +117,50 @@ struct ContentView: View {
         viewModel.preferTrash ? "Çöp Kutusu'na Taşı" : "Kalıcı Sil"
     }
 
-    private func deletionTitle(forCount count: Int) -> String {
-        if viewModel.preferTrash {
-            return count <= 1 ? "Çöp Kutusu'na taşı?" : "Seçilenleri Çöp Kutusu'na taşı?"
+    private func deletionTitle(for items: [SweepItem]) -> String {
+        let risky = items.contains(where: \.affectsXcode)
+        if risky {
+            return "⚠️ Xcode uyarısı"
         }
-        return count <= 1 ? "Kalıcı sil?" : "Seçilenleri kalıcı sil?"
+        if viewModel.preferTrash {
+            return items.count <= 1 ? "Çöp Kutusu'na taşı?" : "Seçilenleri Çöp Kutusu'na taşı?"
+        }
+        return items.count <= 1 ? "Kalıcı sil?" : "Seçilenleri kalıcı sil?"
     }
 
-    private func deletionMessage(name: String?, path: String?, count: Int, size: String) -> String {
+    private func deletionMessage(for items: [SweepItem], treatingAsAll: Bool = false) -> String {
         let action = viewModel.preferTrash
             ? "Çöp Kutusu'na taşınacak"
             : "kalıcı olarak silinecek"
 
-        if let name, let path {
-            return "\"\(name)\" \(action) (\(size)).\n\(path)"
+        let size: String
+        let count: Int
+        if treatingAsAll {
+            size = viewModel.formattedTotalSize
+            count = items.count
+        } else if items.count == 1, let item = items.first {
+            var lines: [String] = [
+                "\"\(item.name)\" \(action) (\(item.formattedSize)).",
+                item.path.path
+            ]
+            if let warning = item.xcodeWarning {
+                lines.append("")
+                lines.append("⚠️ \(warning)")
+            }
+            return lines.joined(separator: "\n")
+        } else {
+            size = ByteCountFormatter.string(
+                fromByteCount: items.reduce(0) { $0 + $1.byteCount },
+                countStyle: .file
+            )
+            count = items.count
         }
 
-        return "\(count) öğe \(action) (\(size))."
+        var text = "\(count) öğe \(action) (\(size))."
+        if items.contains(where: \.affectsXcode) {
+            text += "\n\n⚠️ Bu seçimde Xcode’a zarar verebilecek / yeniden indirme gerektirebilecek öğeler var. Silerseniz Xcode etkilenebilir."
+        }
+        return text
     }
 }
 

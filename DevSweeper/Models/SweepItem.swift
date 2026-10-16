@@ -1,6 +1,6 @@
 import Foundation
 
-/// Temizlenebilir bir disk öğesi (önbellek klasörü veya simülatör).
+/// Temizlenebilir bir disk öğesi (önbellek klasörü, alt öğe veya simülatör).
 struct SweepItem: Identifiable, Hashable, Sendable {
     let id: UUID
     let name: String
@@ -8,6 +8,12 @@ struct SweepItem: Identifiable, Hashable, Sendable {
     let byteCount: Int64
     let category: SweepCategory
     let kind: Kind
+    /// Üst grup (Derived Data vb.) — genişletilebilir; silinince içeriği temizlenir, kök kalır.
+    let isGroup: Bool
+    /// Silindiğinde Xcode'un yeniden indirme / kurulum istemesine yol açabilir.
+    let affectsXcode: Bool
+    /// Alt öğeler; `nil` ise yaprak (genişletilemez).
+    let children: [SweepItem]?
 
     enum Kind: String, Hashable, Sendable {
         case derivedData
@@ -19,6 +25,18 @@ struct SweepItem: Identifiable, Hashable, Sendable {
 
     var formattedSize: String {
         ByteCountFormatter.string(fromByteCount: byteCount, countStyle: .file)
+    }
+
+    var xcodeWarning: String? {
+        guard affectsXcode else { return nil }
+        return "Bu dosyayı silerseniz Xcode’a zarar verebilirsiniz; ilgili bileşenlerin yeniden indirilmesi / yüklenmesi gerekebilir."
+    }
+
+    /// Ağacı düz listeye çevirir (seçim / arama için).
+    static func flatten(_ items: [SweepItem]) -> [SweepItem] {
+        items.flatMap { item in
+            [item] + flatten(item.children ?? [])
+        }
     }
 }
 

@@ -38,8 +38,16 @@ final class SweepViewModel {
         }
     }
 
+    var flatItems: [SweepItem] {
+        SweepItem.flatten(items)
+    }
+
     var selectedItems: [SweepItem] {
-        items.filter { selectedItemIDs.contains($0.id) }
+        flatItems.filter { selectedItemIDs.contains($0.id) }
+    }
+
+    var selectedAffectsXcode: Bool {
+        selectedItems.contains(where: \.affectsXcode)
     }
 
     var selectedByteCount: Int64 {
@@ -64,6 +72,10 @@ final class SweepViewModel {
 
     var canCleanSelected: Bool {
         !selectedItems.isEmpty && !isLoading && !isDeleting
+    }
+
+    var allAffectsXcode: Bool {
+        flatItems.contains(where: \.affectsXcode)
     }
 
     // MARK: - Load
@@ -144,7 +156,8 @@ final class SweepViewModel {
 
         do {
             try await service.deleteAll(targets, preferTrash: preferTrash)
-            selectedItemIDs.subtract(targets.map(\.id))
+            let removed = Set(SweepItem.flatten(targets).map(\.id))
+            selectedItemIDs.subtract(removed)
             await refreshCurrent()
         } catch {
             present(error)
@@ -153,7 +166,7 @@ final class SweepViewModel {
     }
 
     private func pruneSelection() {
-        let valid = Set(items.map(\.id))
+        let valid = Set(flatItems.map(\.id))
         selectedItemIDs = selectedItemIDs.intersection(valid)
     }
 

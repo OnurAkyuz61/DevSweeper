@@ -9,8 +9,6 @@ struct SweepItemTableView: View {
     let onClean: (SweepItem) -> Void
     let onCleanSelected: () -> Void
 
-    @State private var sortOrder = [KeyPathComparator(\SweepItem.byteCount, order: .reverse)]
-
     var body: some View {
         Group {
             if isLoading && items.isEmpty {
@@ -23,17 +21,35 @@ struct SweepItemTableView: View {
                     description: Text("Bu kategoride temizlenecek bir şey yok.")
                 )
             } else {
-                Table(sortedItems, selection: $selection, sortOrder: $sortOrder) {
-                    TableColumn("Öğe Adı", value: \.name) { item in
-                        HStack(spacing: 8) {
-                            Image(systemName: icon(for: item.kind))
+                Table(items, children: \.children, selection: $selection) {
+                    TableColumn("Öğe Adı") { item in
+                        HStack(spacing: 6) {
+                            Image(systemName: icon(for: item))
                                 .foregroundStyle(.secondary)
                                 .frame(width: 16)
+
                             Text(item.name)
                                 .lineLimit(1)
+                                .fontWeight(item.isGroup ? .semibold : .regular)
+
+                            if item.affectsXcode {
+                                Image(systemName: "exclamationmark.triangle.fill")
+                                    .foregroundStyle(.orange)
+                                    .help(item.xcodeWarning ?? "")
+                                    .accessibilityLabel("Xcode uyarısı")
+                            }
+
+                            if item.isGroup, let count = item.children?.count, count > 0 {
+                                Text("\(count)")
+                                    .font(.caption2)
+                                    .padding(.horizontal, 5)
+                                    .padding(.vertical, 1)
+                                    .background(.quaternary, in: Capsule())
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                     }
-                    .width(min: 180, ideal: 240)
+                    .width(min: 200, ideal: 280)
 
                     TableColumn("Dosya Yolu") { item in
                         Text(item.path.path)
@@ -42,9 +58,9 @@ struct SweepItemTableView: View {
                             .lineLimit(1)
                             .help(item.path.path)
                     }
-                    .width(min: 220, ideal: 360)
+                    .width(min: 200, ideal: 340)
 
-                    TableColumn("Boyut", value: \.byteCount) { item in
+                    TableColumn("Boyut") { item in
                         Text(item.formattedSize)
                             .monospacedDigit()
                     }
@@ -65,6 +81,7 @@ struct SweepItemTableView: View {
                         .tint(.red)
                         .disabled(isDeleting || isLoading)
                         .controlSize(.small)
+                        .help(item.affectsXcode ? (item.xcodeWarning ?? "Sil") : "Sil")
                     }
                     .width(90)
                 }
@@ -75,17 +92,23 @@ struct SweepItemTableView: View {
         }
     }
 
-    private var sortedItems: [SweepItem] {
-        items.sorted(using: sortOrder)
-    }
+    private func icon(for item: SweepItem) -> String {
+        if !item.isGroup {
+            switch item.kind {
+            case .derivedData: return "folder"
+            case .archives: return "doc.zipper"
+            case .deviceSupport: return "internaldrive"
+            case .simulatorRuntime: return "square.stack.3d.up"
+            case .simulatorDevice: return "iphone"
+            }
+        }
 
-    private func icon(for kind: SweepItem.Kind) -> String {
-        switch kind {
+        switch item.kind {
         case .derivedData: return "hammer"
         case .archives: return "archivebox"
         case .deviceSupport: return "cable.connector"
-        case .simulatorRuntime: return "square.stack.3d.up"
-        case .simulatorDevice: return "iphone"
+        case .simulatorRuntime: return "square.stack.3d.up.fill"
+        case .simulatorDevice: return "iphone.gen3"
         }
     }
 }

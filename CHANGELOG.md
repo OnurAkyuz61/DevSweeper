@@ -5,9 +5,10 @@ Sürümleme [Semantic Versioning](https://semver.org/) ile yapılır.
 
 ## [Unreleased]
 
-### Planlanan
+### Added
 
-- —
+- Genişletilebilir ağaç görünümü: grupların (Derived Data, Archives, Device Support, Runtimes, Devices) altındaki öğeler listelenir ve tek tek silinebilir
+- Xcode’u etkileyen öğelerde turuncu uyarı üçgeni ve silme onayında uyarı metni (Device Support, Simulator Runtimes)
 
 ## [1.0.0] — 2026-10-16
 
