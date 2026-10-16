@@ -26,6 +26,8 @@ final class SweepViewModel {
     var showError = false
 
     var confirmDeleteItem: SweepItem?
+    /// Ayrı bayrak: macOS'ta optional `presenting:` dialog bazen açılmıyor.
+    var showDeleteConfirmation = false
     var confirmDeleteAll = false
     var confirmDeleteSelected = false
 
@@ -120,6 +122,7 @@ final class SweepViewModel {
 
     func requestDelete(_ item: SweepItem) {
         confirmDeleteItem = item
+        showDeleteConfirmation = true
     }
 
     func requestDeleteAll() {
@@ -131,8 +134,17 @@ final class SweepViewModel {
         confirmDeleteSelected = true
     }
 
+    func cancelDeleteSingle() {
+        showDeleteConfirmation = false
+        confirmDeleteItem = nil
+    }
+
     func confirmDeleteSingle() async {
-        guard let item = confirmDeleteItem else { return }
+        guard let item = confirmDeleteItem else {
+            showDeleteConfirmation = false
+            return
+        }
+        showDeleteConfirmation = false
         confirmDeleteItem = nil
         await performDelete([item])
     }

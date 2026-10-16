@@ -21,73 +21,103 @@ struct SweepItemTableView: View {
                     description: Text("Bu kategoride temizlenecek bir şey yok.")
                 )
             } else {
-                Table(items, children: \.children, selection: $selection) {
-                    TableColumn("Öğe Adı") { item in
-                        HStack(spacing: 6) {
-                            Image(systemName: icon(for: item))
-                                .foregroundStyle(.secondary)
-                                .frame(width: 16)
-
-                            Text(item.name)
-                                .lineLimit(1)
-                                .fontWeight(item.isGroup ? .semibold : .regular)
-
-                            if item.affectsXcode {
-                                Image(systemName: "exclamationmark.triangle.fill")
-                                    .foregroundStyle(.orange)
-                                    .help(item.xcodeWarning ?? "")
-                                    .accessibilityLabel("Xcode uyarısı")
-                            }
-
-                            if item.isGroup, let count = item.children?.count, count > 0 {
-                                Text("\(count)")
-                                    .font(.caption2)
-                                    .padding(.horizontal, 5)
-                                    .padding(.vertical, 1)
-                                    .background(.quaternary, in: Capsule())
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
+                VStack(spacing: 0) {
+                    headerRow
+                    Divider()
+                    List(items, children: \.children, selection: $selection) { item in
+                        itemRow(item)
                     }
-                    .width(min: 200, ideal: 280)
-
-                    TableColumn("Dosya Yolu") { item in
-                        Text(item.path.path)
-                            .font(.system(.body, design: .monospaced))
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
-                            .help(item.path.path)
+                    .listStyle(.inset(alternatesRowBackgrounds: true))
+                    .onDeleteCommand {
+                        onCleanSelected()
                     }
-                    .width(min: 200, ideal: 340)
+                }
+            }
+        }
+    }
 
-                    TableColumn("Boyut") { item in
-                        Text(item.formattedSize)
-                            .monospacedDigit()
-                    }
-                    .width(min: 80, ideal: 100)
+    private var headerRow: some View {
+        HStack(spacing: 12) {
+            Text("Öğe Adı")
+                .frame(minWidth: 200, maxWidth: .infinity, alignment: .leading)
+            Text("Dosya Yolu")
+                .frame(minWidth: 180, maxWidth: .infinity, alignment: .leading)
+            Text("Boyut")
+                .frame(width: 90, alignment: .trailing)
+            Text("İşlem")
+                .frame(width: 88, alignment: .center)
+        }
+        .font(.caption.weight(.semibold))
+        .foregroundStyle(.secondary)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 8)
+    }
 
-                    TableColumn("İşlem") { item in
-                        Button {
-                            onClean(item)
-                        } label: {
-                            if deletingItemID == item.id {
-                                ProgressView()
-                                    .controlSize(.small)
-                            } else {
-                                Label("Sil", systemImage: "trash")
-                            }
-                        }
-                        .buttonStyle(.bordered)
-                        .tint(.red)
-                        .disabled(isDeleting || isLoading)
+    @ViewBuilder
+    private func itemRow(_ item: SweepItem) -> some View {
+        HStack(spacing: 12) {
+            HStack(spacing: 6) {
+                Image(systemName: icon(for: item))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 16)
+
+                Text(item.name)
+                    .lineLimit(1)
+                    .fontWeight(item.isGroup ? .semibold : .regular)
+                    .help(item.name)
+
+                if item.affectsXcode {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundStyle(.orange)
+                        .help(item.xcodeWarning ?? "")
+                        .accessibilityLabel("Xcode uyarısı")
+                }
+
+                if item.isGroup, let count = item.children?.count, count > 0 {
+                    Text("\(count)")
+                        .font(.caption2)
+                        .padding(.horizontal, 5)
+                        .padding(.vertical, 1)
+                        .background(.quaternary, in: Capsule())
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .frame(minWidth: 200, maxWidth: .infinity, alignment: .leading)
+
+            Text(item.path.path)
+                .font(.system(.caption, design: .monospaced))
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .help(item.path.path)
+                .frame(minWidth: 180, maxWidth: .infinity, alignment: .leading)
+
+            Text(item.formattedSize)
+                .monospacedDigit()
+                .frame(width: 90, alignment: .trailing)
+
+            Button {
+                onClean(item)
+            } label: {
+                if deletingItemID == item.id {
+                    ProgressView()
                         .controlSize(.small)
-                        .help(item.affectsXcode ? (item.xcodeWarning ?? "Sil") : "Sil")
-                    }
-                    .width(90)
+                        .frame(width: 72)
+                } else {
+                    Label("Sil", systemImage: "trash")
                 }
-                .onDeleteCommand {
-                    onCleanSelected()
-                }
+            }
+            .buttonStyle(.bordered)
+            .tint(.red)
+            .controlSize(.small)
+            .disabled(isDeleting || isLoading)
+            .help(item.affectsXcode ? (item.xcodeWarning ?? "Sil") : "Sil")
+            .frame(width: 88)
+        }
+        .padding(.vertical, 2)
+        .tag(item.id)
+        .contextMenu {
+            Button("Sil", role: .destructive) {
+                onClean(item)
             }
         }
     }

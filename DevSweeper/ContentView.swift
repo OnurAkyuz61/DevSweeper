@@ -36,24 +36,22 @@ struct ContentView: View {
         } message: { message in
             Text(message)
         }
-        .confirmationDialog(
+        .alert(
             deletionTitle(for: viewModel.confirmDeleteItem.map { [$0] } ?? []),
-            isPresented: Binding(
-                get: { viewModel.confirmDeleteItem != nil },
-                set: { if !$0 { viewModel.confirmDeleteItem = nil } }
-            ),
-            presenting: viewModel.confirmDeleteItem
-        ) { item in
+            isPresented: $viewModel.showDeleteConfirmation
+        ) {
             Button(confirmButtonTitle, role: .destructive) {
                 Task { await viewModel.confirmDeleteSingle() }
             }
             Button("İptal", role: .cancel) {
-                viewModel.confirmDeleteItem = nil
+                viewModel.cancelDeleteSingle()
             }
-        } message: { item in
-            Text(deletionMessage(for: [item]))
+        } message: {
+            if let item = viewModel.confirmDeleteItem {
+                Text(deletionMessage(for: [item]))
+            }
         }
-        .confirmationDialog(
+        .alert(
             deletionTitle(for: viewModel.selectedItems),
             isPresented: $viewModel.confirmDeleteSelected
         ) {
@@ -64,7 +62,7 @@ struct ContentView: View {
         } message: {
             Text(deletionMessage(for: viewModel.selectedItems))
         }
-        .confirmationDialog(
+        .alert(
             deletionTitle(for: viewModel.items),
             isPresented: $viewModel.confirmDeleteAll
         ) {
