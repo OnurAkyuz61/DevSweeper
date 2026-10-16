@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 /*
@@ -15,8 +16,22 @@ import SwiftUI
    için yönetici yetkisi gerekebilir.
  */
 
+final class AppDelegate: NSObject, NSApplicationDelegate {
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        // Dock'ta görünsün ve normal uygulama gibi davransın.
+        NSApp.setActivationPolicy(.regular)
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        true
+    }
+}
+
 @main
 struct DevSweeperApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+
     var body: some Scene {
         WindowGroup {
             ContentView()
