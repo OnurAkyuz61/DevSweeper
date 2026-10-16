@@ -192,15 +192,18 @@ final class SweepViewModel {
 
         do {
             try await service.deleteAll(compact, preferTrash: preferTrash) { [weak self] progress in
-                await MainActor.run {
-                    self?.deletionProgress = progress
-                }
+                guard let self else { return }
+                await self.setDeletionProgress(progress)
             }
             await refreshQuietly()
         } catch {
             present(error)
             await refreshQuietly()
         }
+    }
+
+    private func setDeletionProgress(_ progress: DeletionProgress) {
+        deletionProgress = progress
     }
 
     private func dropFromScreen(ids: Set<UUID>) {
